@@ -143,8 +143,12 @@ const App = (function(ItemCtrl,UICtrl) {
 
     // Delete item
     const itemDeleteSubmit = function(e) {
-        var itemClicked = e.target;
-        if (itemClicked.className = 'item-delete') {
+
+        var itemClicked = e.target.className;
+
+        debugger;
+
+        if (itemClicked = "item-delete") {
 
             // Delete item from data structure
             ItemCtrl.deleteItem(itemClicked.parentNode.id);
