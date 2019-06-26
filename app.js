@@ -101,24 +101,25 @@ const UICtrl = (function() {
         },
         addItemToForm: function(currentItem) {
 
-            // Format date
-            // var dateFormat = function dateFormat(currentItem.date) {
-            //     var d = new Date(currentItem.date),
-            //         month = '' + (d.getMonth() + 1),
-            //         day = '' + d.getDate(),
-            //         year = d.getFullYear();
+            // Format date   
+            var itemDate = currentItem.date;
+            var dateFormat = function dateFormat(itemDate) {
+                var d = new Date(currentItem.date),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
             
-            //     if (month.length < 2) month = '0' + month;
-            //     if (day.length < 2) day = '0' + day;
+                if (month.length < 2) month = '0' + month;
+                if (day.length < 2) day = '0' + day;
             
-            //     return [year, month, day].join('-');
-            //     };
+                return [year, month, day].join('-');
+                };
 
             // Populate fields
             document.querySelector(UISelectors.itemAmountInput).value = currentItem.amount;
             document.querySelector(UISelectors.itemCurrencyInput).value = currentItem.currency;
             document.querySelector(UISelectors.itemCategoryInput).value = currentItem.category;
-            document.querySelector(UISelectors.itemDateInput).value = currentItem.date;
+            document.querySelector(UISelectors.itemDateInput).value = dateFormat();
         },
         clearInput: function() {
             document.querySelector(UISelectors.itemAmountInput).value = '';
