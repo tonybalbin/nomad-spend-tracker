@@ -41,6 +41,10 @@ const ItemCtrl = (function(){
             data.items.splice(itemID,1)
             
         },
+        setCurrentItem: function(itemID) {
+            currentItem = (data.items[itemID]);
+            return currentItem;
+        },
         logData: function() {
             return data;
         }
@@ -95,6 +99,27 @@ const UICtrl = (function() {
         deleteListItem: function(item) {
             item.remove();
         },
+        addItemToForm: function(currentItem) {
+
+            // Format date
+            // var dateFormat = function dateFormat(currentItem.date) {
+            //     var d = new Date(currentItem.date),
+            //         month = '' + (d.getMonth() + 1),
+            //         day = '' + d.getDate(),
+            //         year = d.getFullYear();
+            
+            //     if (month.length < 2) month = '0' + month;
+            //     if (day.length < 2) day = '0' + day;
+            
+            //     return [year, month, day].join('-');
+            //     };
+
+            // Populate fields
+            document.querySelector(UISelectors.itemAmountInput).value = currentItem.amount;
+            document.querySelector(UISelectors.itemCurrencyInput).value = currentItem.currency;
+            document.querySelector(UISelectors.itemCategoryInput).value = currentItem.category;
+            document.querySelector(UISelectors.itemDateInput).value = currentItem.date;
+        },
         clearInput: function() {
             document.querySelector(UISelectors.itemAmountInput).value = '';
             document.querySelector(UISelectors.itemCurrencyInput).value = 'Choose...';
@@ -117,7 +142,7 @@ const App = (function(ItemCtrl,UICtrl) {
         document.getElementById('spend-form').addEventListener('submit', itemAddSubmit);
 
         // Delete item event
-        document.querySelector('ul').addEventListener('click', itemDeleteSubmit);
+        document.querySelector('ul').addEventListener('click', itemLinkClick);
     }
 
     // Add item submit
@@ -141,20 +166,30 @@ const App = (function(ItemCtrl,UICtrl) {
         e.preventDefault();
     }
 
-    // Delete item
-    const itemDeleteSubmit = function(e) {
+    // Delete / edit item
+    const itemLinkClick = function(e) {
 
-        var itemClicked = e.target.className;
+        var itemClicked = e.target;
 
-        debugger;
-
-        if (itemClicked = "item-delete") {
+        if (itemClicked.classList.contains("item-delete")) {
 
             // Delete item from data structure
             ItemCtrl.deleteItem(itemClicked.parentNode.id);
 
             // Delete item from UI
             UICtrl.deleteListItem(itemClicked.parentNode);
+
+            } else if (itemClicked.classList.contains("item-edit")) {
+
+                // Get item ID
+                let itemToEdit = itemClicked.parentNode.id;
+
+                // Get item from data array
+                let currentItem = ItemCtrl.setCurrentItem(itemToEdit);
+
+                // Populate fields
+                UICtrl.addItemToForm(currentItem);
+
             }
     }
 
