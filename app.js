@@ -58,6 +58,7 @@ const UICtrl = (function() {
         addBtn: '.add-btn',
         updateBtn: '.update-btn',
         backBtn: '.back-btn',
+        deleteBtn: '.delete-btn',
         itemList: '#item-list',
         itemAmountInput: '#amount',
         itemCurrencyInput: '#currency',
@@ -105,6 +106,7 @@ const UICtrl = (function() {
             document.querySelector(UISelectors.addBtn).style.display = 'none';
             document.querySelector(UISelectors.updateBtn).style.display = 'inline';
             document.querySelector(UISelectors.backBtn).style.display = 'inline';
+            document.querySelector(UISelectors.deleteBtn).style.display = 'inline';
         },
         addItemToForm: function(currentItem) {
 
@@ -133,9 +135,11 @@ const UICtrl = (function() {
         },
 
         clearEditState: function() {
+            UICtrl.clearInput();
             document.querySelector(UISelectors.addBtn).style.display = 'inline';
             document.querySelector(UISelectors.updateBtn).style.display = 'none';
             document.querySelector(UISelectors.backBtn).style.display = 'none';
+            document.querySelector(UISelectors.deleteBtn).style.display = 'none';
         },
         clearInput: function() {
             document.querySelector(UISelectors.itemAmountInput).value = '';
@@ -160,6 +164,12 @@ const App = (function(ItemCtrl,UICtrl) {
 
         // Delete item event
         document.querySelector('ul').addEventListener('click', itemLinkClick);
+
+        // Back button event
+        document.querySelector(UISelectors.backBtn).addEventListener('click', UICtrl.clearEditState);
+
+        // Delete item during edit state
+        document.querySelector(UISelectors.deleteBtn).addEventListener('click', itemLinkClick);
     }
 
     // Add item submit
@@ -206,6 +216,11 @@ const App = (function(ItemCtrl,UICtrl) {
 
                 // Populate fields
                 UICtrl.addItemToForm(currentItem);
+
+            } else if (itemClicked.classList.contains("delete-edit-state")) {
+
+                // Clear fields
+                UICtrl.clearEditState();
 
             }
     }
