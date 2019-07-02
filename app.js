@@ -56,6 +56,8 @@ const ItemCtrl = (function(){
 const UICtrl = (function() {
     const UISelectors = {
         addBtn: '.add-btn',
+        updateBtn: '.update-btn',
+        backBtn: '.back-btn',
         itemList: '#item-list',
         itemAmountInput: '#amount',
         itemCurrencyInput: '#currency',
@@ -99,6 +101,11 @@ const UICtrl = (function() {
         deleteListItem: function(item) {
             item.remove();
         },
+        showEditState: function() {
+            document.querySelector(UISelectors.addBtn).style.display = 'none';
+            document.querySelector(UISelectors.updateBtn).style.display = 'inline';
+            document.querySelector(UISelectors.backBtn).style.display = 'inline';
+        },
         addItemToForm: function(currentItem) {
 
             // Format date   
@@ -120,6 +127,15 @@ const UICtrl = (function() {
             document.querySelector(UISelectors.itemCurrencyInput).value = currentItem.currency;
             document.querySelector(UISelectors.itemCategoryInput).value = currentItem.category;
             document.querySelector(UISelectors.itemDateInput).value = dateFormat();
+
+            // Enable edit state
+            UICtrl.showEditState();
+        },
+
+        clearEditState: function() {
+            document.querySelector(UISelectors.addBtn).style.display = 'inline';
+            document.querySelector(UISelectors.updateBtn).style.display = 'none';
+            document.querySelector(UISelectors.backBtn).style.display = 'none';
         },
         clearInput: function() {
             document.querySelector(UISelectors.itemAmountInput).value = '';
@@ -198,6 +214,9 @@ const App = (function(ItemCtrl,UICtrl) {
     return {
         init: function() {
 
+            // Clear edit state / set initial set
+            UICtrl.clearEditState();
+            
             // Load event listeners
             loadEventListeners();
         }
