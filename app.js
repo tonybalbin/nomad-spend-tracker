@@ -11,7 +11,8 @@ const ItemCtrl = (function(){
 
     // Data Structure
     const data = {
-        items: []
+        items: [],
+        currentItem: null,
     }
 
     // Public Methods
@@ -41,7 +42,10 @@ const ItemCtrl = (function(){
             data.items.splice(itemID,1)
             
         },
-        setCurrentItem: function(itemID) {
+        setCurrentItem: function(item) {
+            data.currentItem = item;
+        },
+        getCurrentItem: function(itemID) {
             currentItem = (data.items[itemID]);
             return currentItem;
         },
@@ -162,14 +166,14 @@ const App = (function(ItemCtrl,UICtrl) {
         // Add item event
         document.getElementById('spend-form').addEventListener('submit', itemAddSubmit);
 
-        // Delete item event
-        document.querySelector('ul').addEventListener('click', itemLinkClick);
-
         // Back button event
         document.querySelector(UISelectors.backBtn).addEventListener('click', UICtrl.clearEditState);
 
+        // Delete item event
+        document.querySelector('ul').addEventListener('click', itemLinkClick);
+
         // Delete item during edit state
-        document.querySelector(UISelectors.deleteBtn).addEventListener('click', itemLinkClick);
+        document.querySelector(UISelectors.deleteBtn).addEventListener('click', deleteItemEditState);
     }
 
     // Add item submit
@@ -198,6 +202,7 @@ const App = (function(ItemCtrl,UICtrl) {
 
         var itemClicked = e.target;
 
+        // Delete item
         if (itemClicked.classList.contains("item-delete")) {
 
             // Delete item from data structure
@@ -206,23 +211,49 @@ const App = (function(ItemCtrl,UICtrl) {
             // Delete item from UI
             UICtrl.deleteListItem(itemClicked.parentNode);
 
+            // Edit item
             } else if (itemClicked.classList.contains("item-edit")) {
 
                 // Get item ID
                 let itemToEdit = itemClicked.parentNode.id;
 
+                // Set current item
+                ItemCtrl.setCurrentItem(itemToEdit);
+
                 // Get item from data array
-                let currentItem = ItemCtrl.setCurrentItem(itemToEdit);
+                let currentItem = ItemCtrl.getCurrentItem(itemToEdit);
 
                 // Populate fields
                 UICtrl.addItemToForm(currentItem);
 
-            } else if (itemClicked.classList.contains("delete-edit-state")) {
+            } 
+    }
 
-                // Clear fields
-                UICtrl.clearEditState();
+    // Delete item during edit state
+    const deleteItemEditState = function(e) {
 
-            }
+        var itemClicked = e.target;
+
+        if (itemClicked.classList.contains("delete-edit-state")) {
+
+            // Get item ID
+            const itemID = ItemCtrl.logData();
+
+            // Delete item from data structure
+            ItemCtrl.deleteItem(itemID.currentItem);
+
+            // Get item from UI
+            let item = document.querySelector('ul');
+            let itemListNumber = parseInt(itemID.currentItem) + 1;            
+            let listItem = item.childNodes[itemListNumber];
+
+            // Delete item from UI
+            UICtrl.deleteListItem(listItem);
+
+            // Clear fields
+            UICtrl.clearEditState();
+
+        }
     }
 
     // Public methods
