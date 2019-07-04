@@ -49,6 +49,18 @@ const ItemCtrl = (function(){
             currentItem = (data.items[itemID]);
             return currentItem;
         },
+        updateItem: function(amount, currency, category, date) {
+            
+            let found = null;
+            data.items.forEach(function(item){
+                if(item.id === data.currentItem){
+                    item.amount = amount;
+                    item.currency = currency;
+                    item.category = category;
+                    item.date = date;
+                }})  
+            return found;
+        },
         logData: function() {
             return data;
         }
@@ -76,12 +88,12 @@ const UICtrl = (function() {
         getSelectors: function() {
             return UISelectors;
         },
-        getItemInput: function(e) {
+        getItemInput: function() {
             return {
-                amount:e.target[0].value,
-                currency:e.target[1].value,
-                category:e.target[2].value,
-                date:new Date(e.target[3].value)
+                amount:document.querySelector(UISelectors.itemAmountInput).value,
+                currency:document.querySelector(UISelectors.itemCurrencyInput).value,
+                category:document.querySelector(UISelectors.itemCategoryInput).value,
+                date:new Date(document.querySelector(UISelectors.itemDateInput).value),
             }
         },
         addListItem: function(item) {
@@ -166,21 +178,24 @@ const App = (function(ItemCtrl,UICtrl) {
         // Add item event
         document.getElementById('spend-form').addEventListener('submit', itemAddSubmit);
 
-        // Back button event
-        document.querySelector(UISelectors.backBtn).addEventListener('click', UICtrl.clearEditState);
-
-        // Delete item event
+        // Delete / edit item event
         document.querySelector('ul').addEventListener('click', itemLinkClick);
 
-        // Delete item during edit state
+        // Back button event (from edit state)
+        document.querySelector(UISelectors.backBtn).addEventListener('click', UICtrl.clearEditState);
+
+        // Delete item event (from edit state)
         document.querySelector(UISelectors.deleteBtn).addEventListener('click', deleteItemEditState);
+
+        // Update item event (from edit state)
+        document.querySelector(UISelectors.updateBtn).addEventListener('click', updateItemEditState);
     }
 
     // Add item submit
     const itemAddSubmit = function(e) {
-
+        
         // Get form input from UI controller
-        const input = UICtrl.getItemInput(e);
+        const input = UICtrl.getItemInput();
 
         // Check user submitted all fields
         if (input.amount !== '' && input.currency !== '' && input.category !== '' && input.date !== '') {
@@ -229,7 +244,7 @@ const App = (function(ItemCtrl,UICtrl) {
             } 
     }
 
-    // Delete item during edit state
+    // Delete item (from edit state)
     const deleteItemEditState = function(e) {
 
         var itemClicked = e.target;
@@ -254,6 +269,20 @@ const App = (function(ItemCtrl,UICtrl) {
             UICtrl.clearEditState();
 
         }
+    }
+
+    // Update item (from edit state)
+    const updateItemEditState = function(e) {
+        
+        // Get form input from UI controller
+        const input = UICtrl.getItemInput();
+
+       // Update item
+       const updatedItem = ItemCtrl.updateItem(input.amount, input.currency, input.category, input.date);
+
+       // Update UI
+       UICtrl.updateListItem(updatedItem);
+
     }
 
     // Public methods
