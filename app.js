@@ -53,12 +53,23 @@ const ItemCtrl = (function(){
             
             let found = null;
             data.items.forEach(function(item){
-                if(item.id === data.currentItem){
+                if(item.id == data.currentItem.id){
                     item.amount = amount;
                     item.currency = currency;
                     item.category = category;
                     item.date = date;
+                    found = item;
                 }})  
+            return found;
+        },
+        getItemById: function(id) {
+            let found = null;
+            // Loop through items
+            data.items.forEach(function(item){
+                if (item.id == id){
+                    found = item;
+                }
+            });
             return found;
         },
         logData: function() {
@@ -80,7 +91,8 @@ const UICtrl = (function() {
         itemCurrencyInput: '#currency',
         itemCategoryInput: '#category',
         itemDateInput: '#date',
-        itemDelete: '.item-delete'
+        itemDelete: '.item-delete',
+        listItems: '#item-list li'
     }
 
     // Public methods
@@ -149,7 +161,16 @@ const UICtrl = (function() {
             // Enable edit state
             UICtrl.showEditState();
         },
+        updateListItem: function(item) {
 
+            let listItems = document.querySelectorAll(UISelectors.listItems);
+            
+            // Turn Node list into array
+            listItems = Array.from(listItems);
+
+            console.log('start working here');
+
+        },
         clearEditState: function() {
             UICtrl.clearInput();
             document.querySelector(UISelectors.addBtn).style.display = 'inline';
@@ -230,16 +251,19 @@ const App = (function(ItemCtrl,UICtrl) {
             } else if (itemClicked.classList.contains("item-edit")) {
 
                 // Get item ID
-                let itemToEdit = itemClicked.parentNode.id;
+                let id = itemClicked.parentNode.id;
+
+                // Get item
+                const itemToEdit = ItemCtrl.getItemById(id);
 
                 // Set current item
                 ItemCtrl.setCurrentItem(itemToEdit);
 
                 // Get item from data array
-                let currentItem = ItemCtrl.getCurrentItem(itemToEdit);
+                // let currentItem = ItemCtrl.getCurrentItem(itemToEdit);
 
-                // Populate fields
-                UICtrl.addItemToForm(currentItem);
+                //Populate fields
+                UICtrl.addItemToForm(itemToEdit);
 
             } 
     }
