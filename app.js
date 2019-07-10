@@ -109,7 +109,7 @@ const UICtrl = (function() {
             }
         },
         addListItem: function(item) {
-            // Create a div
+            // Create li element
             const li = document.createElement('li');
             // Add class
             li.className = 'list-group-item';
@@ -168,8 +168,14 @@ const UICtrl = (function() {
             // Turn Node list into array
             listItems = Array.from(listItems);
 
-            console.log('start working here');
-
+            listItems.forEach(function(listItem){
+            const itemID = listItem.getAttribute('id');
+            
+            if(itemID == item.id){
+                console.log('start working here');
+            }
+            })
+            
         },
         clearEditState: function() {
             UICtrl.clearInput();
